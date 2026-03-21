@@ -17,9 +17,6 @@ const useTaskMutations = ({ setTodos, fetchTodos, fetchMetrics, modal, setExitId
   const { modalMode, selectedTodo, formData, closeModal } = modal;
   const [seeding,    setSeeding]    = useState(false);
 
-  // FIX 5: two separate primitives for two separate concerns:
-  //   isSaving (ref)   — prevents double-submit, no re-render needed
-  //   isMutating (state) — drives the Save button spinner, needs re-render
   const isSaving = useRef(false);
   const [isMutating, setIsMutating] = useState(false);
 
@@ -36,8 +33,6 @@ const useTaskMutations = ({ setTodos, fetchTodos, fetchMetrics, modal, setExitId
 
       if (modalMode === "create") {
         await createTodo(formData);
-        // Fetch the real list so total + totalPages are accurate rather than
-        // inserting optimistically and leaving pagination counts stale.
         await fetchTodos();
         fetchMetrics();
         toast.success("Task created 🎉");
@@ -50,15 +45,10 @@ const useTaskMutations = ({ setTodos, fetchTodos, fetchMetrics, modal, setExitId
         closeModal();
 
       } else {
-        // FIX 1: isSaving is reset INSIDE the setTimeout callback's own finally,
-        // not in the outer finally. The outer finally runs synchronously right
-        // after closeModal + setExitId — before the 220ms timer fires. If we
-        // reset isSaving there, the guard opens again during the animation window,
-        // allowing a second delete on a different card before the first resolves.
         closeModal();
         setExitId(selectedTodo._id);
 
-        const targetId = selectedTodo._id; // capture before closeModal clears modal state
+        const targetId = selectedTodo._id; 
 
         setTimeout(async () => {
           try {
@@ -70,17 +60,16 @@ const useTaskMutations = ({ setTodos, fetchTodos, fetchMetrics, modal, setExitId
             toastForError(err);
           } finally {
             setExitId(null);
-            isSaving.current = false; // FIX 1: reset here, after the async work completes
+            isSaving.current = false; 
             setIsMutating(false);
           }
         }, 220);
 
-        return; // FIX 1: skip the outer finally reset for the delete branch
+        return; 
       }
     } catch (err) {
       toastForError(err);
     } finally {
-      // Only reached by create and edit branches (delete returns early above)
       isSaving.current = false;
       setIsMutating(false);
     }

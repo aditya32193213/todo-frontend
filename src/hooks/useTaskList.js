@@ -53,12 +53,6 @@ const useTaskList = () => {
     setSearchRawInternal(val);
     setPage(1);
   }, []);
-
-  // FIX 2: accepts only a plain string value (not a functional updater).
-  // Home.jsx was calling setSortOrder((p) => ...) which worked by accident
-  // because React's setState handles updater functions, but the wrapper was
-  // designed for plain values. Call site in Home.jsx now reads the current
-  // sortOrder directly and passes the resolved string.
   const setSortOrder = useCallback((val) => {
     setSortOrderInternal(val);
     setPage(1);

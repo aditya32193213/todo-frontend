@@ -9,7 +9,7 @@ export const ThemeProvider = ({ children }) => {
     return window.matchMedia("(prefers-color-scheme: dark)").matches;
   });
 
-  // Apply dark class + persist preference
+
   useEffect(() => {
     const root = document.documentElement;
     if (isDark) {
@@ -21,11 +21,7 @@ export const ThemeProvider = ({ children }) => {
     }
   }, [isDark]);
 
-  // FIX 6: the previous code read window.matchMedia(...).matches once on mount
-  // (a snapshot). If the user's OS switches to dark mode at sunset while the
-  // app is open, the app didn't follow. This effect subscribes to the media
-  // query's "change" event so the app reacts in real time — but only when the
-  // user has not set an explicit preference via the toggle (tf-theme in storage).
+
   useEffect(() => {
     const mq = window.matchMedia("(prefers-color-scheme: dark)");
     const handler = (e) => {
@@ -37,12 +33,10 @@ export const ThemeProvider = ({ children }) => {
     return () => mq.removeEventListener("change", handler);
   }, []);
 
-  // When the user toggles manually, store their explicit preference so the
-  // OS listener above correctly stands down.
+
   const toggle = useCallback(() => setIsDark((p) => !p), []);
 
-  // Memoize the context value so consumers only re-render when isDark actually
-  // changes — not on every ThemeProvider render.
+
   const value = useMemo(() => ({ isDark, toggle }), [isDark, toggle]);
 
   return (

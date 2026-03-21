@@ -2,16 +2,11 @@ import { useEffect, useRef, useState } from "react";
 import { X, Plus, Save, AlertTriangle } from "lucide-react";
 import { STATUS_VALUES, STATUS_LABELS } from "../features/tasks/taskConstants";
 
-// FIX 1: receives isMutating prop so the Save button shows a spinner and
-//         disables during an in-flight API call.
-// FIX 2: modal wrapper gets aria-labelledby pointing to the h2 title element
-//         so screen readers announce the dialog's purpose on open.
-
 const TodoModal = ({ isOpen, onClose, onSave, mode, formData, setFormData, isMutating = false }) => {
   const titleRef  = useRef(null);
   const isDelete  = mode === "delete";
   const isEdit    = mode === "edit";
-  const TITLE_ID  = "modal-dialog-title"; // stable id for aria-labelledby
+  const TITLE_ID  = "modal-dialog-title"; 
 
   const [titleTouched, setTitleTouched] = useState(false);
 
@@ -40,7 +35,7 @@ const TodoModal = ({ isOpen, onClose, onSave, mode, formData, setFormData, isMut
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
       role="dialog"
       aria-modal="true"
-      aria-labelledby={TITLE_ID} // FIX 2: associates heading with dialog
+      aria-labelledby={TITLE_ID} 
     >
       <div
         className="absolute inset-0 bg-black/50 backdrop-blur-sm animate-fade-in"
@@ -62,7 +57,7 @@ const TodoModal = ({ isOpen, onClose, onSave, mode, formData, setFormData, isMut
                   ? <Save size={15} className="text-violet-500" />
                   : <Plus size={15} className="text-violet-500" />}
               </div>
-              {/* FIX 2: id matches aria-labelledby on the dialog wrapper */}
+              
               <h2 id={TITLE_ID} className="text-lg font-display font-bold text-slate-800 dark:text-white">
                 {mode === "create" && "New Todo"}
                 {mode === "edit"   && "Edit Todo"}
@@ -156,7 +151,7 @@ const TodoModal = ({ isOpen, onClose, onSave, mode, formData, setFormData, isMut
                 Cancel
               </button>
               <button
-                disabled={isMutating} // FIX 1: disabled during in-flight request
+                disabled={isMutating} 
                 onClick={() => {
                   if (!isDelete && !formData.title?.trim()) {
                     setTitleTouched(true);
@@ -168,7 +163,7 @@ const TodoModal = ({ isOpen, onClose, onSave, mode, formData, setFormData, isMut
                   ${isDelete ? "btn-danger" : "btn-primary"}
                   disabled:opacity-60 disabled:cursor-not-allowed`}
               >
-                {/* FIX 1: spinner feedback while saving */}
+                
                 {isMutating ? (
                   <><div className="spinner" /> {isDelete ? "Deleting…" : isEdit ? "Saving…" : "Adding…"}</>
                 ) : isDelete ? (

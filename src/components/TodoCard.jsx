@@ -9,8 +9,6 @@ const TodoCard = memo(({ todo, onEdit, onDelete, onStatusChange, isExiting }) =>
 
   const handleToggle = async () => {
     setToggling(true);
-    // try/finally ensures toggling resets even if onStatusChange throws
-    // (network error, 401 etc.) — without this the button stays disabled forever.
     try {
       await onStatusChange(todo, info.next);
     } finally {
@@ -20,9 +18,6 @@ const TodoCard = memo(({ todo, onEdit, onDelete, onStatusChange, isExiting }) =>
 
   const handleDelete = () => onDelete(todo);
 
-  // FIX 5: memoized so new Date() is only called when createdAt actually changes.
-  // Previously fmtDate was a plain function redefined on every render, calling
-  // new Date(d) each time — even on unrelated re-renders like status toggles.
   const formattedDate = useMemo(() =>
     todo.createdAt
       ? new Date(todo.createdAt).toLocaleDateString("en-US", {

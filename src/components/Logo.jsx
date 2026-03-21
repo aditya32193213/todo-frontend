@@ -1,13 +1,8 @@
 import { useId } from "react";
 
-// FIX: The gradient id="lg1" was hardcoded. SVG IDs are document-scoped, so
-// when two Logo instances render simultaneously (Navbar + Profile page header),
-// both SVGs define <linearGradient id="lg1"> in the document — the first one
-// wins and the second may render without its gradient. useId() generates a
-// stable unique string per component instance, safe to use as an SVG id.
 
 const Logo = ({ size = "md", showText = true }) => {
-  const uid    = useId().replace(/:/g, ""); // strip colons — not valid in SVG ids
+  const uid    = useId().replace(/:/g, ""); 
   const gradId = `logo-grad-${uid}`;
 
   const cfg = {

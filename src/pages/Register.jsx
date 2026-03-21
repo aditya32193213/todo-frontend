@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import Logo           from "../components/Logo";
 import FormField      from "../components/FormField";
 import PasswordInput  from "../components/PasswordInput";
-import PageBackground from "../components/PageBackground"; // FIX 7
+import PageBackground from "../components/PageBackground"; 
 import useAuth        from "../hooks/useAuth";
 
 const REGISTER_ORBS = [

@@ -32,11 +32,6 @@ const Home = () => {
     isFiltering, isMutating,
   } = useTasks();
 
-  // FIX: useCallback wrappers for sidebar props.
-  // Previously these were inline arrow functions — new references on every render
-  // — which defeated React.memo on Navbar and Sidebar completely. Any state change
-  // in Home (search keystroke, pagination click) would re-render both components
-  // even though their visible output hadn't changed.
   const handleMobileMenuToggle = useCallback(
     () => setSidebarOpen((p) => !p),
     []
@@ -46,8 +41,6 @@ const Home = () => {
     []
   );
 
-  // Memoized: only rebuilds when metric values change (after a mutation),
-  // not on search / pagination / sort re-renders.
   const metricCards = useMemo(() => [
     { icon: BarChart2,    label: "Total",       val: metrics.total,      color: "text-slate-600 dark:text-slate-300",    bg: "bg-slate-100 dark:bg-night-600"       },
     { icon: CheckCircle2, label: "Completed",   val: metrics.completed,  color: "text-emerald-600 dark:text-emerald-400", bg: "bg-emerald-50 dark:bg-emerald-900/20" },
@@ -55,8 +48,6 @@ const Home = () => {
     { icon: Clock,        label: "Pending",     val: metrics.pending,    color: "text-amber-600 dark:text-amber-400",     bg: "bg-amber-50 dark:bg-amber-900/20"     },
   ], [metrics.total, metrics.completed, metrics.inProgress, metrics.pending]);
 
-  // FIX: memoize pagination numbers — Array.from was being re-allocated on every
-  // render including every search keystroke even though totalPages hadn't changed.
   const pageNumbers = useMemo(
     () => Array.from({ length: totalPages }, (_, i) => i + 1),
     [totalPages]

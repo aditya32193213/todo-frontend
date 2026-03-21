@@ -1,11 +1,5 @@
 import API from "./api";
 
-// Token is automatically attached by the request interceptor in api.js —
-// no need to manually set Authorization headers here.
-
-// Backend response shape for all task endpoints:
-//   { success, message, data: <payload> }
-// Axios wraps the HTTP body under res.data, so the payload lives at res.data.data.
 
 export const getTodos = async (params = {}) => {
   const res = await API.get("/tasks", { params });

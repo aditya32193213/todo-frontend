@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import useTaskList      from "./useTaskList";
 import useTaskMetrics   from "./useTaskMetrics";
 import useTaskModal     from "./useTaskModal";
-import useTaskMutations from "./useTaskMutations"; // FIX 9: renamed file
+import useTaskMutations from "./useTaskMutations"; 
 
 export { STATUSES } from "../features/tasks/taskConstants";
 
@@ -57,7 +57,7 @@ const useTasks = () => {
     handleStatusChange: mutations.handleStatusChange,
     handleSeed:         mutations.handleSeed,
     seeding:            mutations.seeding,
-    isMutating:         mutations.isMutating, // FIX 5: thread through for modal button
+    isMutating:         mutations.isMutating,
   };
 };
 

@@ -2,8 +2,6 @@ import { useState, useCallback } from "react";
 
 const EMPTY_FORM = { title: "", description: "", status: "pending" };
 
-// Owns only the modal's open/close state and the form being edited.
-// No fetch logic, no CRUD — purely ephemeral UI state.
 const useTaskModal = () => {
   const [isModalOpen,  setIsModalOpen]  = useState(false);
   const [modalMode,    setModalMode]    = useState("create");

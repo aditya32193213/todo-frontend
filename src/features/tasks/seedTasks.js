@@ -1,5 +1,3 @@
-// Extracted from useTasks so it's not bundled inside the hook module.
-// Import only when the seed action is needed.
 export const SEED_TASKS = [
   {
     title:       "Design authentication flow",

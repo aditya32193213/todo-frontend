@@ -5,12 +5,6 @@ import Logo from "./Logo";
 import { useTheme } from "../context/ThemeContext";
 import { useAuth }  from "../context/AuthContext";
 
-// FIX: wrapped in React.memo.
-// Navbar receives onSeed, seeding, onMobileMenuToggle, mobileMenuOpen from Home.jsx.
-// With the useCallback wrappers added in Home.jsx (see that file), these props are
-// now referentially stable across unrelated re-renders (search input, pagination,
-// sort toggle). memo ensures Navbar skips re-rendering entirely when only the task
-// list changes — which is the most common state update in the app.
 const Navbar = memo(({ onSeed, seeding, onMobileMenuToggle, mobileMenuOpen }) => {
   const { isDark, toggle }     = useTheme();
   const { user, handleLogout } = useAuth();
@@ -35,9 +29,6 @@ const Navbar = memo(({ onSeed, seeding, onMobileMenuToggle, mobileMenuOpen }) =>
   const onLogout = useCallback(async () => {
     setDropOpen(false);
     setIsLoggingOut(true);
-    // try/finally ensures isLoggingOut resets if handleLogout throws and
-    // navigation doesn't happen — otherwise the button stays stuck in
-    // "Logging out…" state permanently.
     try {
       await handleLogout();
     } finally {

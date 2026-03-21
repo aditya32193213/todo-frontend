@@ -10,22 +10,16 @@ class ErrorBoundary extends Component {
     return { hasError: true, error };
   }
 
-  // FIX 8: store componentStack so it's available for error-reporting services
-  // (e.g. Sentry.captureException) and available in the dev overlay below.
-  // Previously componentDidCatch logged it but didn't persist it — it was lost
-  // by the time the recovery UI rendered.
   componentDidCatch(error, info) {
     this.setState({ componentStack: info.componentStack });
     if (process.env.NODE_ENV !== "production") {
       console.error("[ErrorBoundary] Caught render error:", error, info.componentStack);
     }
-    // In production: Sentry.captureException(error, { extra: info })
+   
   }
 
   handleReset = () => {
     this.setState({ hasError: false, error: null, componentStack: null });
-    // Prefer the onReset prop (soft React Router navigation, passed by
-    // RouteErrorBoundary in App.jsx) over a hard page reload.
     if (this.props.onReset) this.props.onReset();
     else window.location.href = "/";
   };

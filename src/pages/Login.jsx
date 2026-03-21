@@ -6,10 +6,9 @@ import toast from "react-hot-toast";
 import Logo            from "../components/Logo";
 import FormField       from "../components/FormField";
 import PasswordInput   from "../components/PasswordInput";
-import PageBackground  from "../components/PageBackground"; // FIX 7
+import PageBackground  from "../components/PageBackground";
 import useAuth         from "../hooks/useAuth";
 
-// FIX 7: module-level constant so the array doesn't reallocate on re-render
 const LOGIN_ORBS = [
   "w-96 h-96 bg-violet-400/30 top-[-120px] left-[-80px]",
   "w-72 h-72 bg-violet-600/20 bottom-[-80px] right-[-60px]",

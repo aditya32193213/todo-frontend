@@ -12,8 +12,6 @@ const AuthContext = createContext(null);
 const parseError = (err) =>
   err?.response?.data?.message || err?.message || "Something went wrong";
 
-// On JSON.parse failure, remove the corrupt entry so the next page load
-// doesn't fail again silently.
 const readUser = () => {
   try {
     const s = localStorage.getItem("tf-user");
@@ -25,9 +23,7 @@ const readUser = () => {
 };
 
 export const AuthProvider = ({ children }) => {
-  // Two separate loading flags so login/register and password update
-  // don't share state — hitting Save on Profile while loading from a
-  // separate auth call won't incorrectly show a spinner on the wrong button.
+
   const [authLoading,    setAuthLoading]    = useState(false);
   const [profileLoading, setProfileLoading] = useState(false);
   const [user,           setUser]           = useState(readUser);
@@ -36,8 +32,6 @@ export const AuthProvider = ({ children }) => {
     setAuthLoading(true);
     try {
       const data = await loginService(credentials);
-      // Backend: { success, message, data: { id, name, email, token } }
-      // authService returns res.data, so payload is at data.data.
       const userData = {
         id:    data.data.id,
         name:  data.data.name,
@@ -62,10 +56,8 @@ export const AuthProvider = ({ children }) => {
     } finally { setAuthLoading(false); }
   }, []);
 
-  // setLoggingOut(true) tells the 401 interceptor to stand down so it
-  // doesn't queue its own redirect while handleLogout is already navigating.
   const handleLogout = useCallback(async () => {
-    const token = localStorage.getItem("token"); // read before clearing
+    const token = localStorage.getItem("token"); 
 
     localStorage.removeItem("token");
     localStorage.removeItem("tf-user");
@@ -91,8 +83,8 @@ export const AuthProvider = ({ children }) => {
   return (
     <AuthContext.Provider value={{
       user,
-      loading:        authLoading,    // login / register spinner
-      profileLoading,                 // password update spinner
+      loading:        authLoading,   
+      profileLoading,                 
       handleLogin, handleRegister, handleLogout, handleUpdatePassword,
     }}>
       {children}

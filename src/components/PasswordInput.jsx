@@ -1,17 +1,6 @@
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 
-// Encapsulates the show/hide password toggle that was copy-pasted across
-// Login.jsx, Register.jsx, and Profile.jsx (three separate implementations).
-//
-// Usage:
-//   <PasswordInput
-//     value={form.password}
-//     onChange={(e) => setForm(p => ({ ...p, password: e.target.value }))}
-//     placeholder="Min. 6 characters"
-//     autoComplete="new-password"
-//     hasError={!!errors.password}
-//   />
 
 const PasswordInput = ({
   value,

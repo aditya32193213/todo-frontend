@@ -27,11 +27,6 @@ const PageLoader = () => (
   </div>
 );
 
-// FIX: ErrorBoundary is a class component and cannot call useNavigate() directly.
-// RouteErrorBoundary is a thin function wrapper that lives INSIDE BrowserRouter
-// (so useNavigate is available) and passes navigate as the onReset prop.
-// This enables soft React Router navigation on "Go to home" instead of a hard
-// window.location.href = "/" reload that re-downloads all JS chunks.
 const RouteErrorBoundary = ({ children }) => {
   const navigate = useNavigate();
   return (
@@ -52,8 +47,6 @@ const AppProviders = ({ children }) => (
 function App() {
   return (
     <AppProviders>
-      {/* BrowserRouter is now the OUTER wrapper so RouteErrorBoundary can
-          call useNavigate() for soft navigation on error recovery. */}
       <BrowserRouter>
         <RouteErrorBoundary>
           <Suspense fallback={<PageLoader />}>
@@ -78,9 +71,6 @@ function App() {
           </Suspense>
         </RouteErrorBoundary>
       </BrowserRouter>
-
-      {/* Global toast — outside BrowserRouter intentionally so it renders
-          above all route transitions without being unmounted on navigation */}
       <Toaster
         position="top-center"
         toastOptions={{

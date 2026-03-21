@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import Logo           from "../components/Logo";
 import FormField      from "../components/FormField";
 import PasswordInput  from "../components/PasswordInput";
-import PageBackground from "../components/PageBackground"; // FIX 7
+import PageBackground from "../components/PageBackground"; 
 import { useTheme }   from "../context/ThemeContext";
 import { useAuth }    from "../context/AuthContext";
 

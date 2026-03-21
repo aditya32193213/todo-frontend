@@ -3,13 +3,6 @@ import { ListTodo, Zap, X, ChevronRight } from "lucide-react";
 import { NAV_ITEMS } from "../features/tasks/taskConstants";
 
 const EMPTY_METRICS = { total: 0, completed: 0, inProgress: 0, pending: 0, pct: 0 };
-
-// FIX: wrapped in React.memo.
-// Sidebar re-rendered on every Home.jsx state change (each search keystroke,
-// every pagination click, every sort toggle) because it had no memo and its
-// props were new arrow functions on every render. With memo + the useCallback
-// wrappers added in Home.jsx, Sidebar now only re-renders when its props
-// actually change (filter change, metrics update, sidebar open/close).
 const Sidebar = memo(({
   isOpen,
   onClose,

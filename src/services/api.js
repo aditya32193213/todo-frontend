@@ -14,14 +14,10 @@ const API = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
-// ── Logout flag ────────────────────────────────────────────────────────────
-// When handleLogout runs deliberately it sets this flag before calling the
-// backend. The 401 interceptor checks it and skips its own redirect so we
-// never queue two simultaneous navigations to /login.
+
 let isLoggingOut = false;
 export const setLoggingOut = (v) => { isLoggingOut = v; };
 
-// ── Request: attach JWT automatically ─────────────────────────────────────
 API.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
@@ -31,13 +27,10 @@ API.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// ── Response: handle 401 globally ─────────────────────────────────────────
 API.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401 && !isLoggingOut) {
-      // FIX 4: only redirect from here when it's a real session expiry,
-      // not a deliberate logout (which handles its own redirect).
       localStorage.removeItem("token");
       localStorage.removeItem("tf-user");
 
