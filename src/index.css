@@ -1,13 +1,199 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@import url("https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ════════════════════════════════
+   BASE
+════════════════════════════════ */
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html { font-family: "DM Sans", sans-serif; scroll-behavior: smooth; }
+
+  body {
+    @apply bg-slate-50 text-slate-900;
+    @apply dark:bg-night-900 dark:text-slate-100;
+    transition: background-color 0.35s ease, color 0.35s ease;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  h1,h2,h3,h4,h5 { font-family: "Syne", sans-serif; }
+
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { @apply bg-transparent; }
+  ::-webkit-scrollbar-thumb { @apply bg-violet-400/40 rounded-full; }
+  ::-webkit-scrollbar-thumb:hover { @apply bg-violet-400/70; }
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+/* ════════════════════════════════
+   ANIMATED BACKGROUND
+════════════════════════════════ */
+.page-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  /* Light mode: airy lavender mesh */
+  background:
+    radial-gradient(ellipse at 15% 15%, rgba(196,181,253,0.5) 0%, transparent 55%),
+    radial-gradient(ellipse at 85% 5%,  rgba(167,139,250,0.3) 0%, transparent 45%),
+    radial-gradient(ellipse at 5% 85%,  rgba(221,214,254,0.4) 0%, transparent 50%),
+    radial-gradient(ellipse at 90% 90%, rgba(139,92,246,0.2)  0%, transparent 45%),
+    #f5f3ff;
+}
+
+.dark .page-bg {
+  /* Dark mode: deep cosmic violet */
+  background:
+    radial-gradient(ellipse at 15% 15%, rgba(109,40,217,0.35) 0%, transparent 55%),
+    radial-gradient(ellipse at 85% 5%,  rgba(91,33,182,0.2)  0%, transparent 45%),
+    radial-gradient(ellipse at 5% 85%,  rgba(76,29,149,0.3)  0%, transparent 50%),
+    radial-gradient(ellipse at 90% 90%, rgba(139,92,246,0.15) 0%, transparent 45%),
+    #07070f;
+}
+
+/* Floating orbs */
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  animation: float 9s ease-in-out infinite;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+/* Grid texture overlay */
+.grid-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  opacity: 0.03;
+  background-image:
+    linear-gradient(rgba(139,92,246,1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(139,92,246,1) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+.dark .grid-overlay { opacity: 0.06; }
+
+/* ════════════════════════════════
+   GLASSMORPHISM
+════════════════════════════════ */
+@layer components {
+  .glass {
+    @apply bg-white/60 dark:bg-night-700/50
+           backdrop-blur-2xl
+           border border-white/50 dark:border-violet-900/30;
+  }
+
+  .glass-card {
+    @apply glass rounded-2xl shadow-card;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .glass-card:hover {
+    transform: translateY(-3px);
+    @apply shadow-3d;
+  }
+
+  /* ── 3D form ── */
+  .form-scene { perspective: 1400px; }
+
+  .form-3d {
+    transform: rotateX(3deg) rotateY(-1.5deg);
+    transform-style: preserve-3d;
+    transition: transform 0.5s cubic-bezier(.23,1,.32,1), box-shadow 0.5s ease;
+    @apply shadow-3d;
+  }
+  .form-3d:hover {
+    transform: rotateX(0deg) rotateY(0deg) translateY(-6px);
+    @apply shadow-3d-hover;
+  }
+
+  /* ── Inputs ── */
+  .input {
+    @apply w-full px-4 py-3 rounded-xl text-sm font-body
+           bg-white/70 dark:bg-night-800/70
+           border border-slate-200 dark:border-violet-900/40
+           text-slate-800 dark:text-slate-100
+           placeholder-slate-400 dark:placeholder-slate-600
+           backdrop-blur-sm
+           focus:outline-none focus:ring-2 focus:ring-violet-400/60 focus:border-violet-400
+           transition-all duration-200;
+  }
+  .input-error { @apply border-red-400 focus:ring-red-400/50; }
+
+  /* ── Buttons ── */
+  .btn-primary {
+    @apply px-5 py-2.5 rounded-xl text-sm font-display font-semibold text-white
+           bg-gradient-to-r from-violet-600 to-violet-500
+           shadow-md hover:shadow-3d hover:-translate-y-0.5
+           active:translate-y-0 active:shadow-md
+           disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0
+           transition-all duration-200;
+  }
+  .btn-ghost {
+    @apply px-5 py-2.5 rounded-xl text-sm font-display font-medium
+           bg-transparent border border-slate-200 dark:border-night-500
+           text-slate-600 dark:text-slate-300
+           hover:bg-slate-100 dark:hover:bg-night-600
+           transition-all duration-200;
+  }
+  .btn-danger {
+    @apply px-5 py-2.5 rounded-xl text-sm font-display font-semibold text-white
+           bg-gradient-to-r from-red-600 to-rose-500
+           shadow-md hover:shadow-lg hover:-translate-y-0.5
+           transition-all duration-200;
+  }
+
+  /* ── Status badges ── */
+  .badge-pending     { @apply px-2.5 py-0.5 rounded-full text-xs font-display font-semibold bg-amber-100 text-amber-700 dark:bg-amber-900/25 dark:text-amber-400; }
+  .badge-in-progress { @apply px-2.5 py-0.5 rounded-full text-xs font-display font-semibold bg-blue-100 text-blue-700 dark:bg-blue-900/25 dark:text-blue-400; }
+  .badge-completed   { @apply px-2.5 py-0.5 rounded-full text-xs font-display font-semibold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/25 dark:text-emerald-400; }
+
+  /* ── Metric card ── */
+  .metric-card {
+    @apply glass-card p-5 flex flex-col gap-1;
+  }
+}
+
+/* ════════════════════════════════
+   PROGRESS BAR
+════════════════════════════════ */
+.progress-track {
+  height: 7px;
+  border-radius: 999px;
+  overflow: hidden;
+  @apply bg-slate-200 dark:bg-night-600;
+}
+.progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #7c3aed, #a78bfa);
+  transition: width 0.9s cubic-bezier(.4,0,.2,1);
+}
+
+/* ════════════════════════════════
+   LOADING SPINNER
+════════════════════════════════ */
+.spinner {
+  width: 20px; height: 20px;
+  border: 2.5px solid rgba(255,255,255,0.25);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.65s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Task delete animation */
+@keyframes slideOut {
+  to { opacity: 0; transform: translateX(50px); }
+}
+.task-exit { animation: slideOut 0.22s ease forwards; }
+
+/* Float keyframes */
+@keyframes float {
+  0%,100% { transform: translateY(0) scale(1); }
+  50%      { transform: translateY(-18px) scale(1.02); }
 }

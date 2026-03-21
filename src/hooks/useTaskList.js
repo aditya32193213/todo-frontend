@@ -1,0 +1,80 @@
+import { useState, useEffect, useCallback } from "react";
+import toast from "react-hot-toast";
+import { getTodos } from "../services/todoService";
+import useDebounce from "./useDebounce";
+
+export const LIMIT = 5;
+
+const useTaskList = () => {
+  const [todos,      setTodos]      = useState([]);
+  const [loading,    setLoading]    = useState(false);
+  const [error,      setError]      = useState(null);
+  const [page,       setPage]       = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [total,      setTotal]      = useState(0);
+  const [exitId,     setExitId]     = useState(null);
+
+  const [searchRaw,    setSearchRawInternal]    = useState("");
+  const [statusFilter, setStatusFilterInternal] = useState("all");
+  const [sortOrder,    setSortOrderInternal]    = useState("latest");
+
+  const debouncedSearch = useDebounce(searchRaw, 400);
+
+  const fetchTodos = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const params = { page, limit: LIMIT, sort: sortOrder };
+      if (statusFilter !== "all")  params.status = statusFilter;
+      if (debouncedSearch.trim()) params.search  = debouncedSearch.trim();
+
+      const data = await getTodos(params);
+      setTodos(data.tasks   || []);
+      setTotalPages(data.pages || 1);
+      setTotal(data.total   || 0);
+    } catch (err) {
+      const msg = err?.response?.data?.message || "Failed to load tasks";
+      setError(msg);
+      toast.error(msg);
+      setTodos([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [page, statusFilter, sortOrder, debouncedSearch]);
+
+  useEffect(() => { fetchTodos(); }, [fetchTodos]);
+
+  const setStatusFilter = useCallback((val) => {
+    setStatusFilterInternal(val);
+    setPage(1);
+  }, []);
+
+  const setSearchRaw = useCallback((val) => {
+    setSearchRawInternal(val);
+    setPage(1);
+  }, []);
+
+  // FIX 2: accepts only a plain string value (not a functional updater).
+  // Home.jsx was calling setSortOrder((p) => ...) which worked by accident
+  // because React's setState handles updater functions, but the wrapper was
+  // designed for plain values. Call site in Home.jsx now reads the current
+  // sortOrder directly and passes the resolved string.
+  const setSortOrder = useCallback((val) => {
+    setSortOrderInternal(val);
+    setPage(1);
+  }, []);
+
+  const isFiltering = searchRaw.trim() !== "" || statusFilter !== "all";
+
+  return {
+    todos, setTodos, loading, error,
+    exitId, setExitId,
+    page, setPage, totalPages, total,
+    searchRaw, setSearchRaw,
+    statusFilter, setStatusFilter,
+    sortOrder, setSortOrder,
+    fetchTodos, isFiltering,
+  };
+};
+
+export default useTaskList;
