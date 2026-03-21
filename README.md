@@ -66,76 +66,45 @@
 
 ## 📸 Screenshots
 
-
 <div align="center">
-
+ 
 ### 🏠 Dashboard — Light Mode
-```
-┌─────────────────────────────────────────────────────┐
-│  [ Screenshot: Home page — metric cards, progress   │
-│    bar, task list, search & filter bar ]            │
-│  Path: /screenshots/home-light.png                  │
-└─────────────────────────────────────────────────────┘
-```
-
+![Dashboard Light Mode](./screenshots/home-light.png)
+ 
+---
+ 
 ### 🌙 Dashboard — Dark Mode
-```
-┌─────────────────────────────────────────────────────┐
-│  [ Screenshot: Home page in dark mode ]             │
-│  Path: /screenshots/home-dark.png                   │
-└─────────────────────────────────────────────────────┘
-```
-
+![Dashboard Dark Mode](./screenshots/home-dark.png)
+ 
+---
+ 
 ### 🔐 Login Page
-```
-┌─────────────────────────────────────────────────────┐
-│  [ Screenshot: Login form with glassmorphism card ] │
-│  Path: /screenshots/login.png                       │
-└─────────────────────────────────────────────────────┘
-```
-
+![Login Page](./screenshots/login.png)
+ 
+---
+ 
 ### 📝 Register Page
-```
-┌─────────────────────────────────────────────────────┐
-│  [ Screenshot: Registration form ]                  │
-│  Path: /screenshots/register.png                    │
-└─────────────────────────────────────────────────────┘
-```
-
+![Register Page](./screenshots/register.png)
+ 
+---
+ 
 ### ✅ Create / Edit Task Modal
-```
-┌─────────────────────────────────────────────────────┐
-│  [ Screenshot: Modal with title, description,       │
-│    and coloured status pills ]                      │
-│  Path: /screenshots/modal-create.png                │
-└─────────────────────────────────────────────────────┘
-```
-
+![Create Task Modal](./screenshots/modal-create.png)
+ 
+---
+ 
 ### 🗑️ Delete Confirmation Modal
-```
-┌─────────────────────────────────────────────────────┐
-│  [ Screenshot: Delete confirmation dialog ]         │
-│  Path: /screenshots/modal-delete.png                │
-└─────────────────────────────────────────────────────┘
-```
-
+![Delete Confirmation](./screenshots/modal-delete.png)
+ 
+---
+ 
 ### 👤 Profile Page
-```
-┌─────────────────────────────────────────────────────┐
-│  [ Screenshot: Profile card + change password form ]│
-│  Path: /screenshots/profile.png                     │
-└─────────────────────────────────────────────────────┘
-```
-
+![Profile Page](./screenshots/profile.png)
+ 
+---
+ 
 ### 📱 Mobile — Sidebar Overlay
-```
-┌─────────────────────────────────────────────────────┐
-│  [ Screenshot: Mobile layout — sidebar open with    │
-│    backdrop blur overlay ]                          │
-│  Path: /screenshots/mobile-sidebar.png              │
-└─────────────────────────────────────────────────────┘
-```
-
+![Mobile Sidebar](./screenshots/mobile-sidebar.png)
 </div>
 
 ---
