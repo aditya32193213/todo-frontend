@@ -249,7 +249,7 @@ const Navbar = memo(({ onSeed, seeding, onMobileMenuToggle, mobileMenuOpen }) =>
                       <span className="font-display font-medium">My Profile</span>
                     </button>
 
-                    <button
+                    {/* <button
                       role="menuitem"
                       onClick={() => { setDropOpen(false); navigate("/profile"); }}
                       className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm
@@ -271,7 +271,7 @@ const Navbar = memo(({ onSeed, seeding, onMobileMenuToggle, mobileMenuOpen }) =>
                         />
                       </div>
                       <span className="font-display font-medium">Settings</span>
-                    </button>
+                    </button> */}
                   </div>
 
                   {/* Divider */}

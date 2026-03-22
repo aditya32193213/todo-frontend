@@ -48,8 +48,8 @@ const AppProviders = ({ children }) => (
 
 function App() {
   return (
+    <BrowserRouter>
     <AppProviders>
-      <BrowserRouter>
         <RouteErrorBoundary>
           <Suspense fallback={<PageLoader />}>
             <Routes>
@@ -61,19 +61,9 @@ function App() {
               <Route path="/login"    element={<GuestRoute><Login /></GuestRoute>} />
               <Route path="/register" element={<GuestRoute><Register /></GuestRoute>} />
               <Route path="*"      element={<NotFound />} />
-
-              {/* Catch-all */}
-              <Route path="*" element={
-                <div className="min-h-screen flex flex-col items-center justify-center gap-4 page-bg">
-                  <p className="text-6xl font-display font-extrabold text-violet-400">404</p>
-                  <p className="text-slate-500 dark:text-slate-400 font-body">Page not found</p>
-                  <a href="/" className="btn-primary">Go Home</a>
-                </div>
-              } />
             </Routes>
           </Suspense>
         </RouteErrorBoundary>
-      </BrowserRouter>
       <Toaster
         position="top-center"
         toastOptions={{
@@ -96,6 +86,7 @@ function App() {
         }}
       />
     </AppProviders>
+    </BrowserRouter>
   );
 }
 
