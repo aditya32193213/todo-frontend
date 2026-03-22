@@ -6,7 +6,9 @@ import { ThemeProvider } from "./context/ThemeContext";
 import { AuthProvider }  from "./context/AuthContext";
 import PrivateRoute      from "./components/PrivateRoute";
 import ErrorBoundary     from "./components/ErrorBoundary";
+import GuestRoute        from "./components/GuestRoute";
 
+const NotFound = lazy(() => import("./pages/NotFound"));
 const Home     = lazy(() => import("./pages/Home"));
 const Login    = lazy(() => import("./pages/Login"));
 const Register = lazy(() => import("./pages/Register"));
@@ -56,8 +58,9 @@ function App() {
               <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
 
               {/* Public */}
-              <Route path="/login"    element={<Login />} />
-              <Route path="/register" element={<Register />} />
+              <Route path="/login"    element={<GuestRoute><Login /></GuestRoute>} />
+              <Route path="/register" element={<GuestRoute><Register /></GuestRoute>} />
+              <Route path="*"      element={<NotFound />} />
 
               {/* Catch-all */}
               <Route path="*" element={
