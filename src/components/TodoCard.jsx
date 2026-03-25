@@ -35,7 +35,7 @@ const TodoCard = memo(({ todo, onEdit, onDelete, onStatusChange, isExiting }) =>
 
   const formattedDate = useMemo(() =>
     todo.createdAt
-      ? new Date(todo.createdAt).toLocaleDateString("en-US", {
+      ? new Date(todo.createdAt || Date.now()).toLocaleDateString("en-US", {
           month: "short", day: "numeric", year: "numeric",
         })
       : "",

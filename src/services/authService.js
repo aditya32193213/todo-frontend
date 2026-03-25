@@ -1,22 +1,36 @@
 import API from "./api";
 
-export const register = async (data) => {
-  const res = await API.post("/auth/register", data);
-  return res.data;
+const handle = async (promise) => {
+  try {
+    const res = await promise;
+    return res?.data ?? null;
+  } catch (error) {
+    console.error("API Error:", error);
+
+    const message =
+      error?.response?.data?.message ||
+      error?.message ||
+      "Something went wrong";
+
+    throw message;
+  }
 };
 
-export const login = async (data) => {
-  const res = await API.post("/auth/login", data);
-  return res.data;
-};
+export const register = (data = {}) =>
+  handle(API.post("/auth/register", data));
+
+export const login = (data = {}) =>
+  handle(API.post("/auth/login", data));
+
+export const updatePassword = (data = {}) =>
+  handle(API.patch("/auth/password", data));
 
 export const logout = async (token) => {
-  await API.post("/auth/logout", null, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-};
-
-export const updatePassword = async (data) => {
-  const res = await API.patch("/auth/password", data);
-  return res.data;
+  try {
+    await API.post("/auth/logout", null, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  } catch (error) {
+    console.error("Logout failed:", error);
+  }
 };

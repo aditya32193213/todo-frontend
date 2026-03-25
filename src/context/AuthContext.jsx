@@ -6,11 +6,14 @@ import {
   updatePassword as updatePasswordService,
 } from "../services/authService";
 import { setLoggingOut } from "../services/api";
+import { useNavigate } from "react-router-dom";
 
 const AuthContext = createContext(null);
 
 const parseError = (err) =>
-  err?.response?.data?.message || err?.message || "Something went wrong";
+   typeof err === "string"
+    ? err
+    : err?.message || "Something went wrong";
 
 const readUser = () => {
   try {
@@ -23,6 +26,8 @@ const readUser = () => {
 };
 
 export const AuthProvider = ({ children }) => {
+  const navigate = useNavigate();
+
 
   const [authLoading,    setAuthLoading]    = useState(false);
   const [profileLoading, setProfileLoading] = useState(false);
@@ -33,9 +38,9 @@ export const AuthProvider = ({ children }) => {
     try {
       const data = await loginService(credentials);
       const userData = {
-        id:    data.data.id,
-        name:  data.data.name,
-        email: data.data.email,
+        id:    data?.data?.id,
+        name:  data?.data?.name,
+        email: data?.data?.email,
       };
       localStorage.setItem("token",   data.data.token);
       localStorage.setItem("tf-user", JSON.stringify(userData));
@@ -67,7 +72,7 @@ export const AuthProvider = ({ children }) => {
     try { await logoutService(token); } catch (_e) { /* already expired */ }
     finally { setLoggingOut(false); }
 
-    window.location.href = "/login";
+    navigate("/login");
   }, []);
 
   const handleUpdatePassword = useCallback(async (data) => {

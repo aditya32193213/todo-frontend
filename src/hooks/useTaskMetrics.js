@@ -9,7 +9,7 @@ const useTaskMetrics = () => {
   const fetchMetrics = useCallback(async () => {
     try {
       const data = await getTaskMetrics();
-      setCounts(data);
+      setCounts(data || EMPTY_METRICS);
     } catch (err) {
       if (process.env.NODE_ENV === "development") {
         console.warn("[useTaskMetrics] Failed to fetch task counts:", err?.message);

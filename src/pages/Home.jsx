@@ -124,6 +124,40 @@ const Home = () => {
     setStatusFilter("all");
   }, [setSearchRaw, setStatusFilter]);
 
+  if (loading) {
+  return (
+    <div className="p-6 grid gap-3">
+      {Array.from({ length: 5 }).map((_, i) => (
+        <SkeletonCard key={i} />
+      ))}
+    </div>
+  );
+}
+
+if (error) {
+  return (
+    <div className="p-6 text-center">
+      <p className="text-red-500 font-semibold">
+        {error}
+      </p>
+      <button
+        onClick={fetchTodos}
+        className="mt-3 px-4 py-2 bg-violet-600 text-white rounded-lg"
+      >
+        Retry
+      </button>
+    </div>
+  );
+}
+
+if (!todos?.length) {
+  return (
+    <div className="p-6 text-center">
+      <p className="text-slate-500">No tasks found</p>
+    </div>
+  );
+}
+
   return (
     <div className="h-screen overflow-hidden flex flex-col relative">
       <PageBackground orbs={HOME_ORBS} />

@@ -9,14 +9,14 @@ if (!process.env.REACT_APP_API_URL && process.env.NODE_ENV === "development") {
 }
 
 const API = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || "https://todo-backend-t5gm.onrender.com/api",
+  baseURL:
+    process.env.REACT_APP_API_URL ||
+    "https://todo-backend-t5gm.onrender.com/api",
   timeout: 12000,
   headers: { "Content-Type": "application/json" },
 });
 
-
 let isLoggingOut = false;
-export const setLoggingOut = (v) => { isLoggingOut = v; };
 
 API.interceptors.request.use(
   (config) => {
@@ -30,16 +30,37 @@ API.interceptors.request.use(
 API.interceptors.response.use(
   (response) => response,
   (error) => {
+    // ✅ Prevent multiple logout triggers
     if (error.response?.status === 401 && !isLoggingOut) {
+      isLoggingOut = true;
+
       localStorage.removeItem("token");
       localStorage.removeItem("tf-user");
 
       if (window.location.pathname !== "/login") {
-        toast.error("Your session has expired. Please sign in again.");
-        setTimeout(() => { window.location.href = "/login"; }, 1500);
+        toast.error("Session expired. Please login again.");
+        setTimeout(() => {
+          window.location.href = "/login";
+        }, 1500);
       }
     }
-    return Promise.reject(error);
+
+    // ✅ Network error
+    if (!error.response) {
+      return Promise.reject("Network error. Please check your connection.");
+    }
+
+    // ✅ Server error (optional)
+    if (error.response.status >= 500) {
+      toast.error("Server error. Please try again later.");
+    }
+
+    const message =
+      error.response?.data?.message ||
+      error.message ||
+      "Something went wrong";
+
+    return Promise.reject(message);
   }
 );
 

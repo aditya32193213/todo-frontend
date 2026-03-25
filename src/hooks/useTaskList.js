@@ -29,13 +29,11 @@ const useTaskList = () => {
       if (debouncedSearch.trim()) params.search  = debouncedSearch.trim();
 
       const data = await getTodos(params);
-      setTodos(data.tasks   || []);
+      setTodos(data?.tasks ?? []);
       setTotalPages(data.pages || 1);
       setTotal(data.total   || 0);
     } catch (err) {
-      const msg = err?.response?.data?.message || "Failed to load tasks";
-      setError(msg);
-      toast.error(msg);
+      const msg = typeof err === "string"? err: err?.message || "Failed to load tasks";
       setTodos([]);
     } finally {
       setLoading(false);

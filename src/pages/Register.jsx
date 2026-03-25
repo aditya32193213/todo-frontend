@@ -50,25 +50,34 @@ const Register = () => {
     return e;
   };
 
-  const handleSubmit = async (ev) => {
-    ev.preventDefault();
-    const errs = validate();
-    if (Object.keys(errs).length) { setErrors(errs); return; }
-    setErrors({});
+const handleSubmit = async (ev) => {
+  ev.preventDefault();
 
-    const result = await handleRegister({
-      name:     form.name.trim(),
-      email:    form.email.trim(),
-      password: form.password,
-    });
+  const errs = validate();
+  if (Object.keys(errs).length) {
+    setErrors(errs);
+    return;
+  }
 
-    if (result.success) {
-      toast.success("Account created! Please sign in 🎉");
-      navigate("/login");
-    } else {
-      toast.error(result.error || "Registration failed");
-    }
-  };
+  setErrors({});
+
+  try {
+  const result = await handleRegister({
+    name: form.name.trim(),
+    email: form.email.trim(),
+    password: form.password,
+  });
+
+  if (result.success) {
+    toast.success("Account created! Please sign in 🎉");
+    navigate("/login");
+  } else {
+    toast.error(result.error || "Registration failed");
+  }
+} catch (err) {
+  toast.error(err?.message || "Registration failed");
+};
+
 
   return (
     <div className="min-h-screen flex flex-col relative overflow-hidden">
@@ -329,5 +338,5 @@ const Register = () => {
     </div>
   );
 };
-
+}
 export default Register;

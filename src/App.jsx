@@ -29,10 +29,29 @@ const PageLoader = () => (
   </div>
 );
 
+// ✅ Route-level Error Boundary (better isolation)
 const RouteErrorBoundary = ({ children }) => {
   const navigate = useNavigate();
+
   return (
-    <ErrorBoundary onReset={() => navigate("/", { replace: true })}>
+    <ErrorBoundary
+      fallback={
+        <div className="min-h-screen flex flex-col items-center justify-center gap-4 text-center px-4">
+          <h2 className="text-xl font-semibold text-red-500">
+            Something went wrong
+          </h2>
+          <p className="text-sm text-gray-500">
+            Please try again or go back to home.
+          </p>
+          <button
+            onClick={() => navigate("/", { replace: true })}
+            className="px-4 py-2 rounded-lg bg-violet-600 text-white hover:bg-violet-700 transition"
+          >
+            Go Home
+          </button>
+        </div>
+      }
+    >
       {children}
     </ErrorBoundary>
   );
@@ -40,52 +59,111 @@ const RouteErrorBoundary = ({ children }) => {
 
 const AppProviders = ({ children }) => (
   <ThemeProvider>
-    <AuthProvider>
-      {children}
-    </AuthProvider>
+    <AuthProvider>{children}</AuthProvider>
   </ThemeProvider>
 );
 
 function App() {
   return (
     <BrowserRouter>
-    <AppProviders>
-        <RouteErrorBoundary>
-          <Suspense fallback={<PageLoader />}>
-            <Routes>
-              {/* Protected */}
-              <Route path="/"        element={<PrivateRoute><Home    /></PrivateRoute>} />
-              <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
+      <AppProviders>
+        <Suspense fallback={<PageLoader />}>
+          <Routes>
+            {/* ✅ Protected Routes */}
+            <Route
+              path="/"
+              element={
+                <RouteErrorBoundary>
+                  <PrivateRoute>
+                    <Home />
+                  </PrivateRoute>
+                </RouteErrorBoundary>
+              }
+            />
 
-              {/* Public */}
-              <Route path="/login"    element={<GuestRoute><Login /></GuestRoute>} />
-              <Route path="/register" element={<GuestRoute><Register /></GuestRoute>} />
-              <Route path="*"      element={<NotFound />} />
-            </Routes>
-          </Suspense>
-        </RouteErrorBoundary>
-      <Toaster
-        position="top-center"
-        toastOptions={{
-          duration: 3500,
-          style: {
-            fontFamily: "'DM Sans', sans-serif",
-            fontSize:   "13px",
-            fontWeight: "500",
-            borderRadius: "12px",
-            padding:    "12px 16px",
-          },
-          success: {
-            style: { background: "#f0fdf4", border: "1px solid #bbf7d0", color: "#166534" },
-            iconTheme: { primary: "#16a34a", secondary: "#f0fdf4" },
-          },
-          error: {
-            style: { background: "#fff1f2", border: "1px solid #fecdd3", color: "#9f1239" },
-            iconTheme: { primary: "#e11d48", secondary: "#fff1f2" },
-          },
-        }}
-      />
-    </AppProviders>
+            <Route
+              path="/profile"
+              element={
+                <RouteErrorBoundary>
+                  <PrivateRoute>
+                    <Profile />
+                  </PrivateRoute>
+                </RouteErrorBoundary>
+              }
+            />
+
+            {/* ✅ Public Routes */}
+            <Route
+              path="/login"
+              element={
+                <RouteErrorBoundary>
+                  <GuestRoute>
+                    <Login />
+                  </GuestRoute>
+                </RouteErrorBoundary>
+              }
+            />
+
+            <Route
+              path="/register"
+              element={
+                <RouteErrorBoundary>
+                  <GuestRoute>
+                    <Register />
+                  </GuestRoute>
+                </RouteErrorBoundary>
+              }
+            />
+
+            {/* ✅ 404 with protection */}
+            <Route
+              path="*"
+              element={
+                <RouteErrorBoundary>
+                  <NotFound />
+                </RouteErrorBoundary>
+              }
+            />
+          </Routes>
+        </Suspense>
+
+        {/* ✅ Global Toast Config */}
+        <Toaster
+          position="top-center"
+          toastOptions={{
+            duration: 3500,
+            style: {
+              fontFamily: "'DM Sans', sans-serif",
+              fontSize: "13px",
+              fontWeight: "500",
+              borderRadius: "12px",
+              padding: "12px 16px",
+            },
+            success: {
+              style: {
+                background: "#f0fdf4",
+                border: "1px solid #bbf7d0",
+                color: "#166534",
+              },
+              iconTheme: {
+                primary: "#16a34a",
+                secondary: "#f0fdf4",
+              },
+            },
+            error: {
+              style: {
+                background: "#fff1f2",
+                border: "1px solid #fecdd3",
+                color: "#9f1239",
+              },
+              iconTheme: {
+                primary: "#e11d48",
+                secondary: "#fff1f2",
+              },
+            },
+          }}
+        />
+      </AppProviders>
     </BrowserRouter>
   );
 }

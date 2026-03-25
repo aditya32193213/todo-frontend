@@ -1,26 +1,50 @@
 import API from "./api";
 
+const handle = async (promise) => {
+  try {
+    const res = await promise;
+    return res?.data?.data ?? null; // safe access
+  } catch (error) {
+    console.error("Todo API Error:", error);
 
-export const getTodos = async (params = {}) => {
-  const res = await API.get("/tasks", { params });
-  return res.data.data;
+    const message =
+      error?.response?.data?.message ||
+      error?.message ||
+      "Something went wrong";
+
+    throw message;
+  }
 };
 
-export const getTaskMetrics = async () => {
-  const res = await API.get("/tasks/metrics");
-  return res.data.data;
-};
+// ✅ GET TODOS
+export const getTodos = (params = {}) =>
+  handle(API.get("/tasks", { params }));
 
-export const createTodo = async (data) => {
-  const res = await API.post("/tasks", data);
-  return res.data.data;
-};
+// ✅ METRICS
+export const getTaskMetrics = () =>
+  handle(API.get("/tasks/metrics"));
 
-export const updateTodo = async (id, data) => {
-  const res = await API.put(`/tasks/${id}`, data);
-  return res.data.data;
-};
+// ✅ CREATE
+export const createTodo = (data = {}) =>
+  handle(API.post("/tasks", data));
 
+// ✅ UPDATE
+export const updateTodo = (id, data = {}) =>
+  handle(API.put(`/tasks/${id}`, data));
+
+// ✅ DELETE (special handling)
 export const deleteTodo = async (id) => {
-  await API.delete(`/tasks/${id}`);
+  try {
+    await API.delete(`/tasks/${id}`);
+    return true; 
+  } catch (error) {
+    console.error("Delete Todo Error:", error);
+
+    const message =
+      error?.response?.data?.message ||
+      error?.message ||
+      "Failed to delete task";
+
+    throw message;
+  }
 };

@@ -49,14 +49,20 @@ const Profile = () => {
   };
 
   const handlePasswordSave = async (ev) => {
-    ev.preventDefault();
-    const errs = validate();
-    if (Object.keys(errs).length) { setErrors(errs); return; }
-    setErrors({});
+  ev.preventDefault();
 
+  const errs = validate();
+  if (Object.keys(errs).length) {
+    setErrors(errs);
+    return;
+  }
+
+  setErrors({});
+
+  try {
     const result = await handleUpdatePassword({
       currentPassword: form.currentPassword,
-      newPassword:     form.newPassword,
+      newPassword: form.newPassword,
       confirmPassword: form.confirmPassword,
     });
 
@@ -66,7 +72,10 @@ const Profile = () => {
     } else {
       toast.error(result.error || "Failed to update password");
     }
-  };
+  } catch (err) {
+    toast.error(err?.message || "Failed to update password");
+  }
+};
 
   return (
     <div className="min-h-screen flex flex-col relative">

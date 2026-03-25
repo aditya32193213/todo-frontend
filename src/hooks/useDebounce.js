@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 const useDebounce = (value, delay = 400) => {
   const [debounced, setDebounced] = useState(value);
 
+  if (delay <= 0) return value;
+
   useEffect(() => {
     const id = setTimeout(() => setDebounced(value), delay);
     return () => clearTimeout(id);

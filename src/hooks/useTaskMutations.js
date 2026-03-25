@@ -4,12 +4,15 @@ import { createTodo, updateTodo, deleteTodo } from "../services/todoService";
 import { SEED_TASKS } from "../features/tasks/seedTasks";
 
 const toastForError = (err) => {
-  if (!navigator.onLine || err.code === "ERR_NETWORK") {
+  if (typeof err === "string") {
+    toast.error(err);
+    return;
+  }
+
+  if (!navigator.onLine) {
     toast.error("No internet connection. Please check your network.");
-  } else if (err?.response?.status >= 400 && err?.response?.status < 500) {
-    toast.error(err?.response?.data?.message || "Invalid request. Please check your input.");
   } else {
-    toast.error("Something went wrong on our end. Please try again.");
+    toast.error(err?.message || "Something went wrong");
   }
 };
 
@@ -28,6 +31,8 @@ const useTaskMutations = ({ setTodos, fetchTodos, fetchMetrics, modal, setExitId
     try {
       if (modalMode !== "delete" && !formData.title?.trim()) {
         toast.error("Title is required");
+        isSaving.current = false;
+        setIsMutating(false);
         return;
       }
 
