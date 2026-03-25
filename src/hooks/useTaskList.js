@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from "react";
-import toast from "react-hot-toast";
 import { getTodos } from "../services/todoService";
 import useDebounce from "./useDebounce";
 
@@ -33,7 +32,8 @@ const useTaskList = () => {
       setTotalPages(data.pages || 1);
       setTotal(data.total   || 0);
     } catch (err) {
-      const msg = typeof err === "string"? err: err?.message || "Failed to load tasks";
+      const _msg = typeof err === "string" ? err : err?.message || "Failed to load tasks";
+      setError(_msg);
       setTodos([]);
     } finally {
       setLoading(false);

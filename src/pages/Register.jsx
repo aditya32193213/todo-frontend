@@ -74,10 +74,10 @@ const handleSubmit = async (ev) => {
   } else {
     toast.error(result.error || "Registration failed");
   }
-} catch (err) {
-  toast.error(err?.message || "Registration failed");
+  } catch (err) {
+    toast.error(err?.message || "Registration failed");
+  }
 };
-
 
   return (
     <div className="min-h-screen flex flex-col relative overflow-hidden">
@@ -338,5 +338,4 @@ const handleSubmit = async (ev) => {
     </div>
   );
 };
-}
 export default Register;
