@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect, useCallback, memo } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Sun, Moon, LogOut, User, ChevronDown,
-  Zap, Menu, X, Settings, ShieldCheck,
+  Zap, Menu, X, ShieldCheck,
 } from "lucide-react";
 import Logo      from "./Logo";
 import { useTheme } from "../context/ThemeContext";
@@ -248,30 +248,6 @@ const Navbar = memo(({ onSeed, seeding, onMobileMenuToggle, mobileMenuOpen }) =>
                       </div>
                       <span className="font-display font-medium">My Profile</span>
                     </button>
-
-                    {/* <button
-                      role="menuitem"
-                      onClick={() => { setDropOpen(false); navigate("/profile"); }}
-                      className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm
-                                 text-slate-700 dark:text-white
-                                 hover:bg-slate-100 dark:hover:bg-white/10
-                                 transition-all duration-150 group"
-                    >
-                      <div
-                        className="w-7 h-7 rounded-lg
-                                   bg-slate-100 dark:bg-white/20
-                                   flex items-center justify-center shrink-0
-                                   group-hover:bg-violet-100 dark:group-hover:bg-violet-500/30
-                                   transition-colors duration-150"
-                      >
-                        <Settings
-                          size={13}
-                          className="text-slate-500 dark:text-slate-100
-                                     group-hover:text-violet-500 transition-colors duration-150"
-                        />
-                      </div>
-                      <span className="font-display font-medium">Settings</span>
-                    </button> */}
                   </div>
 
                   {/* Divider */}
