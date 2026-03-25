@@ -18,6 +18,10 @@ const API = axios.create({
 
 let isLoggingOut = false;
 
+export const setLoggingOut = (val) => {
+  isLoggingOut = val;
+};
+
 API.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");

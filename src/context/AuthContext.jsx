@@ -2,10 +2,10 @@ import { createContext, useContext, useState, useCallback } from "react";
 import {
   login    as loginService,
   register as registerService,
-  logout   as logoutService,
   updatePassword as updatePasswordService,
 } from "../services/authService";
 import { useNavigate } from "react-router-dom";
+import { setLoggingOut } from "../services/api";
 
 const AuthContext = createContext(null);
 
@@ -61,14 +61,13 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const handleLogout = useCallback(async () => {
-    const token = localStorage.getItem("token"); 
-
     localStorage.removeItem("token");
     localStorage.removeItem("tf-user");
     setUser(null);
+    setLoggingOut(false); // ✅ reset so 401 interceptor works on next session
 
     navigate("/login");
-  }, []);
+  }, [navigate]);
 
   const handleUpdatePassword = useCallback(async (data) => {
     setProfileLoading(true);
