@@ -5,7 +5,6 @@ import {
   logout   as logoutService,
   updatePassword as updatePasswordService,
 } from "../services/authService";
-import { setLoggingOut } from "../services/api";
 import { useNavigate } from "react-router-dom";
 
 const AuthContext = createContext(null);
@@ -67,10 +66,6 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("token");
     localStorage.removeItem("tf-user");
     setUser(null);
-
-    setLoggingOut(true);
-    try { await logoutService(token); } catch (_e) { /* already expired */ }
-    finally { setLoggingOut(false); }
 
     navigate("/login");
   }, []);
