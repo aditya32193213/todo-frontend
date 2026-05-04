@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { getTodos } from "../services/todoService";
 import useDebounce from "./useDebounce";
 
-export const LIMIT = 5;
+export const LIMIT = 10;
 
 const useTaskList = () => {
   const [todos,      setTodos]      = useState([]);

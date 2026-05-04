@@ -7,7 +7,7 @@ import Logo           from "../components/Logo";
 import FormField      from "../components/FormField";
 import PasswordInput  from "../components/PasswordInput";
 import PageBackground from "../components/PageBackground";
-import useAuth        from "../hooks/useAuth";
+import { useAuth } from "../context/AuthContext";
 import { useTheme }   from "../context/ThemeContext";
 
 const REGISTER_ORBS = [
@@ -69,8 +69,8 @@ const handleSubmit = async (ev) => {
   });
 
   if (result.success) {
-    toast.success("Account created! Please sign in 🎉");
-    navigate("/login");
+    toast.success("Account created 🎉! Redirecting...");
+    setTimeout(() => navigate("/"), 1500);
   } else {
     toast.error(result.error || "Registration failed");
   }

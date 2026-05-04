@@ -9,7 +9,7 @@ import Logo           from "../components/Logo";
 import FormField      from "../components/FormField";
 import PasswordInput  from "../components/PasswordInput";
 import PageBackground from "../components/PageBackground";
-import useAuth        from "../hooks/useAuth";
+import { useAuth } from "../context/AuthContext";
 import { useTheme }   from "../context/ThemeContext";
 
 const LOGIN_ORBS = [

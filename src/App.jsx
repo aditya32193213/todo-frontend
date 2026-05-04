@@ -1,27 +1,33 @@
-import { lazy, Suspense } from "react";
+// src/App.jsx
+import { lazy, Suspense, useEffect } from "react";
 import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 
 import { ThemeProvider } from "./context/ThemeContext";
-import { AuthProvider }  from "./context/AuthContext";
-import PrivateRoute      from "./components/PrivateRoute";
-import ErrorBoundary     from "./components/ErrorBoundary";
-import GuestRoute        from "./components/GuestRoute";
+import { AuthProvider } from "./context/AuthContext";
+import PrivateRoute from "./components/PrivateRoute";
+import ErrorBoundary from "./components/ErrorBoundary";
+import GuestRoute from "./components/GuestRoute";
+import { setNavigate } from "./utils/navigation";          // ← new
 
 const NotFound = lazy(() => import("./pages/NotFound"));
-const Home     = lazy(() => import("./pages/Home"));
-const Login    = lazy(() => import("./pages/Login"));
+const Home = lazy(() => import("./pages/Home"));
+const Login = lazy(() => import("./pages/Login"));
 const Register = lazy(() => import("./pages/Register"));
-const Profile  = lazy(() => import("./pages/Profile"));
+const Profile = lazy(() => import("./pages/Profile"));
 
 const PageLoader = () => (
   <div className="min-h-screen flex items-center justify-center page-bg">
     <div className="flex flex-col items-center gap-4">
-      <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-violet-600 to-violet-400
-                      flex items-center justify-center animate-glow-pulse">
+      <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-violet-600 to-violet-400 flex items-center justify-center animate-glow-pulse">
         <svg width="22" height="22" viewBox="0 0 40 40" fill="none">
-          <path d="M12 20l5.5 5.5L28 14" stroke="white" strokeWidth="3"
-                strokeLinecap="round" strokeLinejoin="round" />
+          <path
+            d="M12 20l5.5 5.5L28 14"
+            stroke="white"
+            strokeWidth="3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
         </svg>
       </div>
       <div className="spinner" />
@@ -29,32 +35,13 @@ const PageLoader = () => (
   </div>
 );
 
-// ✅ Route-level Error Boundary (better isolation)
-const RouteErrorBoundary = ({ children }) => {
+// Component that passes the navigate function to the global reference
+const NavigateInjector = () => {
   const navigate = useNavigate();
-
-  return (
-    <ErrorBoundary
-      fallback={
-        <div className="min-h-screen flex flex-col items-center justify-center gap-4 text-center px-4">
-          <h2 className="text-xl font-semibold text-red-500">
-            Something went wrong
-          </h2>
-          <p className="text-sm text-gray-500">
-            Please try again or go back to home.
-          </p>
-          <button
-            onClick={() => navigate("/", { replace: true })}
-            className="px-4 py-2 rounded-lg bg-violet-600 text-white hover:bg-violet-700 transition"
-          >
-            Go Home
-          </button>
-        </div>
-      }
-    >
-      {children}
-    </ErrorBoundary>
-  );
+  useEffect(() => {
+    setNavigate(navigate);
+  }, [navigate]);
+  return null;
 };
 
 const AppProviders = ({ children }) => (
@@ -66,68 +53,65 @@ const AppProviders = ({ children }) => (
 function App() {
   return (
     <BrowserRouter>
+      <NavigateInjector />                  {/* ← must be inside Router */}
       <AppProviders>
         <Suspense fallback={<PageLoader />}>
           <Routes>
-            {/* ✅ Protected Routes */}
             <Route
               path="/"
               element={
-                <RouteErrorBoundary>
+                <ErrorBoundary onReset={() => window.location.reload()}>
                   <PrivateRoute>
                     <Home />
                   </PrivateRoute>
-                </RouteErrorBoundary>
+                </ErrorBoundary>
               }
             />
 
             <Route
               path="/profile"
               element={
-                <RouteErrorBoundary>
+                <ErrorBoundary onReset={() => window.location.reload()}>
                   <PrivateRoute>
                     <Profile />
                   </PrivateRoute>
-                </RouteErrorBoundary>
+                </ErrorBoundary>
               }
             />
 
-            {/* ✅ Public Routes */}
             <Route
               path="/login"
               element={
-                <RouteErrorBoundary>
+                <ErrorBoundary onReset={() => window.location.reload()}>
                   <GuestRoute>
                     <Login />
                   </GuestRoute>
-                </RouteErrorBoundary>
+                </ErrorBoundary>
               }
             />
 
             <Route
               path="/register"
               element={
-                <RouteErrorBoundary>
+                <ErrorBoundary onReset={() => window.location.reload()}>
                   <GuestRoute>
                     <Register />
                   </GuestRoute>
-                </RouteErrorBoundary>
+                </ErrorBoundary>
               }
             />
 
-            {/* ✅ 404 with protection */}
             <Route
               path="*"
               element={
-                <RouteErrorBoundary>
+                <ErrorBoundary onReset={() => window.location.reload()}>
                   <NotFound />
-                </RouteErrorBoundary>
+                </ErrorBoundary>
               }
             />
           </Routes>
         </Suspense>
 
-        {/* ✅ Global Toast Config */}
         <Toaster
           position="top-center"
           toastOptions={{

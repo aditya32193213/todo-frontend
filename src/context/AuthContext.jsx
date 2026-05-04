@@ -1,8 +1,9 @@
 import { createContext, useContext, useState, useCallback } from "react";
 import {
-  login    as loginService,
+  login as loginService,
   register as registerService,
   updatePassword as updatePasswordService,
+  logout as logoutService,
 } from "../services/authService";
 import { useNavigate } from "react-router-dom";
 import { setLoggingOut } from "../services/api";
@@ -10,7 +11,7 @@ import { setLoggingOut } from "../services/api";
 const AuthContext = createContext(null);
 
 const parseError = (err) =>
-   typeof err === "string"
+  typeof err === "string"
     ? err
     : err?.message || "Something went wrong";
 
@@ -27,21 +28,20 @@ const readUser = () => {
 export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
 
-
-  const [authLoading,    setAuthLoading]    = useState(false);
+  const [authLoading, setAuthLoading] = useState(false);
   const [profileLoading, setProfileLoading] = useState(false);
-  const [user,           setUser]           = useState(readUser);
+  const [user, setUser] = useState(readUser);
 
   const handleLogin = useCallback(async (credentials) => {
     setAuthLoading(true);
     try {
       const data = await loginService(credentials);
       const userData = {
-        id:    data?.data?.id,
-        name:  data?.data?.name,
+        id: data?.data?.id,
+        name: data?.data?.name,
         email: data?.data?.email,
       };
-      localStorage.setItem("token",   data.data.token);
+      localStorage.setItem("token", data.data.token);
       localStorage.setItem("tf-user", JSON.stringify(userData));
       setUser(userData);
       return { success: true };
@@ -50,22 +50,35 @@ export const AuthProvider = ({ children }) => {
     } finally { setAuthLoading(false); }
   }, []);
 
-  const handleRegister = useCallback(async (credentials) => {
-    setAuthLoading(true);
-    try {
-      await registerService(credentials);
-      return { success: true };
-    } catch (err) {
-      return { success: false, error: parseError(err) };
-    } finally { setAuthLoading(false); }
-  }, []);
+const handleRegister = useCallback(async (credentials) => {
+  setAuthLoading(true);
+  try {
+    const data = await registerService(credentials);
+    const userData = {
+      id: data?.data?.id,
+      name: data?.data?.name,
+      email: data?.data?.email,
+    };
+    localStorage.setItem("token", data.data.token);
+    localStorage.setItem("tf-user", JSON.stringify(userData));
+    setUser(userData);
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: parseError(err) };
+  } finally { setAuthLoading(false); }
+}, []);  
 
   const handleLogout = useCallback(async () => {
+    const token = localStorage.getItem("token");
     localStorage.removeItem("token");
     localStorage.removeItem("tf-user");
     setUser(null);
-    setLoggingOut(false); // ✅ reset so 401 interceptor works on next session
+    setLoggingOut(true);
 
+    if (token) {
+      try { await logoutService(token); } catch (_e) { /* silent */ }
+    }
+    setLoggingOut(false);
     navigate("/login");
   }, [navigate]);
 
@@ -82,8 +95,8 @@ export const AuthProvider = ({ children }) => {
   return (
     <AuthContext.Provider value={{
       user,
-      loading:        authLoading,   
-      profileLoading,                 
+      loading: authLoading,
+      profileLoading,
       handleLogin, handleRegister, handleLogout, handleUpdatePassword,
     }}>
       {children}

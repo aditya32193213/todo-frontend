@@ -1,3 +1,4 @@
+// src/hooks/useTaskMutations.js
 import { useState, useRef, useCallback } from "react";
 import toast from "react-hot-toast";
 import { createTodo, updateTodo, deleteTodo } from "../services/todoService";
@@ -8,7 +9,6 @@ const toastForError = (err) => {
     toast.error(err);
     return;
   }
-
   if (!navigator.onLine) {
     toast.error("No internet connection. Please check your network.");
   } else {
@@ -16,10 +16,17 @@ const toastForError = (err) => {
   }
 };
 
-const useTaskMutations = ({ setTodos, fetchTodos, fetchMetrics, modal, setExitId }) => {
+const useTaskMutations = ({
+  setTodos,
+  fetchTodos,
+  fetchMetrics,
+  modal,
+  setExitId,
+  page,        // ← new
+  setPage,     // ← new
+}) => {
   const { modalMode, selectedTodo, formData, closeModal } = modal;
-  const [seeding,    setSeeding]    = useState(false);
-
+  const [seeding, setSeeding] = useState(false);
   const isSaving = useRef(false);
   const [isMutating, setIsMutating] = useState(false);
 
@@ -31,8 +38,6 @@ const useTaskMutations = ({ setTodos, fetchTodos, fetchMetrics, modal, setExitId
     try {
       if (modalMode !== "delete" && !formData.title?.trim()) {
         toast.error("Title is required");
-        isSaving.current = false;
-        setIsMutating(false);
         return;
       }
 
@@ -42,57 +47,72 @@ const useTaskMutations = ({ setTodos, fetchTodos, fetchMetrics, modal, setExitId
         fetchMetrics();
         toast.success("Task created 🎉");
         closeModal();
-
       } else if (modalMode === "edit") {
         const updated = await updateTodo(selectedTodo._id, formData);
-        setTodos((prev) => prev.map((t) => (t._id === selectedTodo._id ? updated : t)));
+        setTodos((prev) =>
+          prev.map((t) => (t._id === selectedTodo._id ? updated : t))
+        );
         toast.success("Task updated ✅");
         closeModal();
-
       } else {
+        // Delete
         closeModal();
         setExitId(selectedTodo._id);
 
-        const targetId = selectedTodo._id; 
+        // Wait for exit animation
+        await new Promise((res) => setTimeout(res, 220));
+        await deleteTodo(selectedTodo._id);
 
-        setTimeout(async () => {
-          try {
-            await deleteTodo(targetId);
-            setTodos((prev) => prev.filter((t) => t._id !== targetId));
-            fetchMetrics();
-            toast.success("Task deleted");
-          } catch (err) {
-            toastForError(err);
-          } finally {
-            setExitId(null);
-            isSaving.current = false; 
-            setIsMutating(false);
+        setTodos((prev) => {
+          const remaining = prev.filter((t) => t._id !== selectedTodo._id);
+          // If we emptied the current page and there are earlier pages, go back one
+          if (remaining.length === 0 && page > 1) {
+            setPage(page - 1);   // triggers a re-fetch automatically
           }
-        }, 220);
+          return remaining;
+        });
 
-        return; 
+        fetchMetrics();
+        toast.success("Task deleted");
       }
     } catch (err) {
+      if (modalMode === "delete") setExitId(null);
       toastForError(err);
     } finally {
       isSaving.current = false;
       setIsMutating(false);
     }
-  }, [modalMode, formData, selectedTodo, setTodos, fetchTodos, fetchMetrics, closeModal, setExitId]);
+  }, [
+    modalMode, formData, selectedTodo, setTodos, fetchTodos, fetchMetrics,
+    closeModal, setExitId, page, setPage,
+  ]);
 
-  const handleStatusChange = useCallback(async (todo, newStatus) => {
-    setTodos((prev) => prev.map((t) => (t._id === todo._id ? { ...t, status: newStatus } : t)));
-    try {
-      const updated = await updateTodo(todo._id, { status: newStatus });
-      setTodos((prev) => prev.map((t) => (t._id === todo._id ? updated : t)));
-      const labels = { pending: "Pending", "in-progress": "In Progress", completed: "Completed" };
-      toast.success(`Marked as ${labels[newStatus]} ✓`);
-      fetchMetrics();
-    } catch (err) {
-      setTodos((prev) => prev.map((t) => (t._id === todo._id ? todo : t)));
-      toastForError(err);
-    }
-  }, [setTodos, fetchMetrics]);
+  const handleStatusChange = useCallback(
+    async (todo, newStatus) => {
+      setTodos((prev) =>
+        prev.map((t) => (t._id === todo._id ? { ...t, status: newStatus } : t))
+      );
+      try {
+        const updated = await updateTodo(todo._id, { status: newStatus });
+        setTodos((prev) =>
+          prev.map((t) => (t._id === todo._id ? updated : t))
+        );
+        const labels = {
+          pending: "Pending",
+          "in-progress": "In Progress",
+          completed: "Completed",
+        };
+        toast.success(`Marked as ${labels[newStatus]} ✓`);
+        fetchMetrics();
+      } catch (err) {
+        setTodos((prev) =>
+          prev.map((t) => (t._id === todo._id ? todo : t))
+        );
+        toastForError(err);
+      }
+    },
+    [setTodos, fetchMetrics]
+  );
 
   const handleSeed = useCallback(async () => {
     setSeeding(true);

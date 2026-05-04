@@ -1,20 +1,7 @@
 import API from "./api";
 
-const handle = async (promise) => {
-  try {
-    const res = await promise;
-    return res?.data ?? null;
-  } catch (error) {
-    console.error("API Error:", error);
-
-    const message =
-      error?.response?.data?.message ||
-      error?.message ||
-      "Something went wrong";
-
-    throw message;
-  }
-};
+// No try-catch — interceptor already formats errors
+const handle = (promise) => promise.then((res) => res?.data ?? null);
 
 export const register = (data = {}) =>
   handle(API.post("/auth/register", data));
@@ -30,7 +17,8 @@ export const logout = async (token) => {
     await API.post("/auth/logout", null, {
       headers: { Authorization: `Bearer ${token}` },
     });
-  } catch (error) {
-    console.error("Logout failed:", error);
+  } catch (_e) {
+    // Logout failures are intentionally silent — the user has already been logged out locally.
+    console.error("Logout API call failed:", _e);
   }
 };

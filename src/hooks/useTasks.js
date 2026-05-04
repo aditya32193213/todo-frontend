@@ -1,10 +1,9 @@
+// src/hooks/useTasks.js
 import { useEffect } from "react";
 import useTaskList      from "./useTaskList";
 import useTaskMetrics   from "./useTaskMetrics";
 import useTaskModal     from "./useTaskModal";
-import useTaskMutations from "./useTaskMutations"; 
-
-export { STATUSES } from "../features/tasks/taskConstants";
+import useTaskMutations from "./useTaskMutations";
 
 const useTasks = () => {
   const list    = useTaskList();
@@ -19,6 +18,8 @@ const useTasks = () => {
     fetchMetrics,
     modal,
     setExitId:    list.setExitId,
+    page:         list.page,          // ← pass current page
+    setPage:      list.setPage,       // ← pass setter
   });
 
   useEffect(() => { fetchMetrics(); }, [fetchMetrics]);
@@ -43,6 +44,7 @@ const useTasks = () => {
     setSortOrder:    list.setSortOrder,
 
     metrics: metrics.counts,
+    metricsError:   metrics.error,
 
     isModalOpen:  modal.isModalOpen,
     modalMode:    modal.modalMode,

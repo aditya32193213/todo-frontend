@@ -218,7 +218,10 @@ todo-frontend/
     │   ├── 📄 useTaskModal.js               # Modal open/close/mode/formData (pure UI)
     │   ├── 📄 useTaskMutations.js           # All writes: CRUD, seed, status toggle
     │   ├── 📄 useAuth.js                    # Re-export shim → AuthContext
-    │   └── 📄 useDebounce.js               # Generic debounce (400ms default)
+    │   └── 📄 useDebounce.js                # Generic debounce (400ms default)
+    │
+    │── 📂utils/                             # Shared helpers (e.g., JWT validation)
+    │   └── 📄 token.js
     │
     ├── 📂 services/                         # 🌐 API layer
     │   ├── 📄 api.js                        # Axios instance + interceptors
