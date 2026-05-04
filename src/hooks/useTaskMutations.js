@@ -22,8 +22,6 @@ const useTaskMutations = ({
   fetchMetrics,
   modal,
   setExitId,
-  page,        // ← new
-  setPage,     // ← new
 }) => {
   const { modalMode, selectedTodo, formData, closeModal } = modal;
   const [seeding, setSeeding] = useState(false);
@@ -63,15 +61,8 @@ const useTaskMutations = ({
         await new Promise((res) => setTimeout(res, 220));
         await deleteTodo(selectedTodo._id);
 
-        setTodos((prev) => {
-          const remaining = prev.filter((t) => t._id !== selectedTodo._id);
-          // If we emptied the current page and there are earlier pages, go back one
-          if (remaining.length === 0 && page > 1) {
-            setPage(page - 1);   // triggers a re-fetch automatically
-          }
-          return remaining;
-        });
-
+        // Re-fetch from server (handles pagination, empty page, and totals)
+        await fetchTodos();
         fetchMetrics();
         toast.success("Task deleted");
       }
@@ -84,7 +75,7 @@ const useTaskMutations = ({
     }
   }, [
     modalMode, formData, selectedTodo, setTodos, fetchTodos, fetchMetrics,
-    closeModal, setExitId, page, setPage,
+    closeModal, setExitId,
   ]);
 
   const handleStatusChange = useCallback(

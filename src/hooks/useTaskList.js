@@ -28,6 +28,14 @@ const useTaskList = () => {
       if (debouncedSearch.trim()) params.search  = debouncedSearch.trim();
 
       const data = await getTodos(params);
+
+      // If the current page is now empty but there are earlier pages, go back
+      if (data?.tasks?.length === 0 && page > 1) {
+        setPage((prev) => prev - 1);
+        setLoading(false);
+        return; // the page change triggers a new fetch
+      }
+
       setTodos(data?.tasks ?? []);
       setTotalPages(data.pages || 1);
       setTotal(data.total   || 0);
@@ -51,6 +59,7 @@ const useTaskList = () => {
     setSearchRawInternal(val);
     setPage(1);
   }, []);
+
   const setSortOrder = useCallback((val) => {
     setSortOrderInternal(val);
     setPage(1);
